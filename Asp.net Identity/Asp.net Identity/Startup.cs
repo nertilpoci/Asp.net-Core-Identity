@@ -11,6 +11,9 @@ using Asp.net_Identity.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+using Microsoft.AspNetCore.Http;
 
 namespace Asp.net_Identity
 {
@@ -78,5 +81,5 @@ namespace Asp.net_Identity
             });
         }
     }
-
+   
 }
