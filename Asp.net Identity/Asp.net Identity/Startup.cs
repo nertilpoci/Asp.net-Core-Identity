@@ -14,6 +14,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using IdentityServer4.EntityFramework.Options;
 
 namespace Asp.net_Identity
 {
@@ -29,9 +31,10 @@ namespace Asp.net_Identity
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+
+           
+            services.AddScoped<ApplicationDbContext>();
 
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
