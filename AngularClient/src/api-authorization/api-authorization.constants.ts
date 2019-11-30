@@ -1,4 +1,6 @@
-export const ApplicationName = 'WebApplication1';
+import { UserManagerSettings } from "oidc-client";
+
+export const ApplicationName = 'AngularClient';
 
 export const ReturnUrlType = 'returnUrl';
 
@@ -20,15 +22,25 @@ export const LoginActions = {
   Profile: 'profile',
   Register: 'register'
 };
+let userManagerSettings:UserManagerSettings = {
+    authority: "https://localhost:5001",
+    client_id: "AngularClient",
+    post_logout_redirect_uri: "http://localhost:4200/authentication/logged-out",
+    redirect_uri: "http://localhost:4200/authentication/login-callback",
+    response_type: "code",
+    scope: "api1 openid profile AspNetIdentityAPI",
+    automaticSilentRenew: true,
+    includeIdTokenInSilentRenew: true
+}
+export const AuthSettings: UserManagerSettings = userManagerSettings;
 
 let applicationPaths: ApplicationPathsType = {
   DefaultLoginRedirectPath: '/',
-    ApiAuthorizationClientConfigurationUrl: `https://localhost:5001/_configuration/${ApplicationName}`,
   Login: `authentication/${LoginActions.Login}`,
   LoginFailed: `authentication/${LoginActions.LoginFailed}`,
   LoginCallback: `authentication/${LoginActions.LoginCallback}`,
   Register: `authentication/${LoginActions.Register}`,
-  Profile: `authentication/${LoginActions.Profile}`,
+  Profile: `${userManagerSettings.authority}/authentication/${LoginActions.Profile}`,
   LogOut: `authentication/${LogoutActions.Logout}`,
   LoggedOut: `authentication/${LogoutActions.LoggedOut}`,
   LogOutCallback: `authentication/${LogoutActions.LogoutCallback}`,
@@ -41,7 +53,7 @@ let applicationPaths: ApplicationPathsType = {
   LoggedOutPathComponents: [],
   LogOutCallbackPathComponents: [],
   IdentityRegisterPath: '/Identity/Account/Register',
-  IdentityManagePath: '/Identity/Account/Manage'
+  IdentityManagePath: `${userManagerSettings.authority}/Identity/Account/Manage`
 };
 
 applicationPaths = {
@@ -57,7 +69,6 @@ applicationPaths = {
 
 interface ApplicationPathsType {
   readonly DefaultLoginRedirectPath: string;
-  readonly ApiAuthorizationClientConfigurationUrl: string;
   readonly Login: string;
   readonly LoginFailed: string;
   readonly LoginCallback: string;

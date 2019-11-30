@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { User, UserManager, WebStorageStateStore } from 'oidc-client';
 import { BehaviorSubject, concat, from, Observable } from 'rxjs';
 import { filter, map, mergeMap, take, tap } from 'rxjs/operators';
-import { ApplicationPaths, ApplicationName } from './api-authorization.constants';
+import { AuthSettings} from './api-authorization.constants';
 
 export type IAuthenticationResult =
   SuccessAuthenticationResult |
@@ -56,9 +56,10 @@ export class AuthorizeService {
   }
 
   public getAccessToken(): Observable<string> {
+    console.log('getting access token')
     return from(this.ensureUserManagerInitialized())
       .pipe(mergeMap(() => from(this.userManager.getUser())),
-        map(user => user && user.access_token));
+        map(user => {console.log(user && user.access_token); return user && user.access_token}));
   }
 
   // We try to authenticate the user in three different ways:
@@ -153,8 +154,8 @@ export class AuthorizeService {
     }
   }
 
-    private createArguments(state?: any): any {
-        console.log("create argument", { useReplaceToNavigate: true, data: state })
+  private createArguments(state?: any): any {
+    console.log("create argument", { useReplaceToNavigate: true, data: state })
     return { useReplaceToNavigate: true, data: state };
   }
 
@@ -175,23 +176,7 @@ export class AuthorizeService {
       return;
     }
 
-    // // const response = await fetch(ApplicationPaths.ApiAuthorizationClientConfigurationUrl);
-    // if (!response.ok) {
-    //   throw new Error(`Could not load settings for '${ApplicationName}'`);
-    // }
-
-    // const settings: any = await response.json();
-    const settings : any = {
-authority: "https://localhost:5001",
-client_id: "WebApplication1",
-post_logout_redirect_uri: "http://localhost:4200/authentication/logged-out",
-redirect_uri: "http://localhost:4200/authentication/login-callback",
-response_type: "code",
-scope: "api1 WebApplication1API openid profile",
-automaticSilentRenew : true,
-includeIdTokenInSilentRenew : true,
-    }
-    this.userManager = new UserManager(settings);
+    this.userManager = new UserManager(AuthSettings);
 
     this.userManager.events.addUserSignedOut(async () => {
       await this.userManager.removeUser();
